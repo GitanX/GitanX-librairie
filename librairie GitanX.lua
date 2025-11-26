@@ -1,37 +1,29 @@
--- GitanX (fork de la librairie fournie)
-local GitanX = {RainbowColorValue = 0, HueSelectionPosition = 0}
+local lib = {RainbowColorValue = 0, HueSelectionPosition = 0}
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
+local LocalPlayer = game:GetService("Players").LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 local PresetColor = Color3.fromRGB(44, 120, 224)
 local CloseBind = Enum.KeyCode.RightControl
 
 local ui = Instance.new("ScreenGui")
-ui.Name = "GitanX"
--- Parent to PlayerGui instead of CoreGui for compatibility / security
-ui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+ui.Name = "ui"
+ui.Parent = game.CoreGui
 ui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
--- Keep existing behavior but avoid runaway loops when UI is destroyed
 coroutine.wrap(
     function()
         while wait() do
-            if not ui or not ui.Parent then
-                break
+            lib.RainbowColorValue = lib.RainbowColorValue + 1 / 255
+            lib.HueSelectionPosition = lib.HueSelectionPosition + 1
+
+            if lib.RainbowColorValue >= 1 then
+                lib.RainbowColorValue = 0
             end
 
-            GitanX.RainbowColorValue = GitanX.RainbowColorValue + 1 / 255
-            GitanX.HueSelectionPosition = GitanX.HueSelectionPosition + 1
-
-            if GitanX.RainbowColorValue >= 1 then
-                GitanX.RainbowColorValue = 0
-            end
-
-            if GitanX.HueSelectionPosition == 80 then
-                GitanX.HueSelectionPosition = 0
+            if lib.HueSelectionPosition == 80 then
+                lib.HueSelectionPosition = 0
             end
         end
     end
@@ -93,12 +85,11 @@ local function MakeDraggable(topbarobject, object)
     )
 end
 
-function GitanX:Window(text, preset, closebind)
+function lib:Window(text, preset, closebind)
     CloseBind = closebind or Enum.KeyCode.RightControl
     PresetColor = preset or Color3.fromRGB(44, 120, 224)
-    local fs = false
+    fs = false
     local Main = Instance.new("Frame")
-    local MainCorner = Instance.new("UICorner")
     local TabHold = Instance.new("Frame")
     local TabHoldLayout = Instance.new("UIListLayout")
     local Title = Instance.new("TextLabel")
@@ -114,11 +105,6 @@ function GitanX:Window(text, preset, closebind)
     Main.Size = UDim2.new(0, 0, 0, 0)
     Main.ClipsDescendants = true
     Main.Visible = true
-
-    -- Slightly more rounded main frame
-    MainCorner.CornerRadius = UDim.new(0, 8)
-    MainCorner.Name = "MainCorner"
-    MainCorner.Parent = Main
 
     TabHold.Name = "TabHold"
     TabHold.Parent = Main
@@ -160,22 +146,22 @@ function GitanX:Window(text, preset, closebind)
             if io.KeyCode == CloseBind then
                 if uitoggled == false then
                     uitoggled = true
-
+                
                     Main:TweenSize(
-                        UDim2.new(0, 0, 0, 0),
-                        Enum.EasingDirection.Out,
-                        Enum.EasingStyle.Quart,
-                        .6,
-                        true,
+                        UDim2.new(0, 0, 0, 0), 
+                        Enum.EasingDirection.Out, 
+                        Enum.EasingStyle.Quart, 
+                        .6, 
+                        true, 
                         function()
                             ui.Enabled = false
                         end
                     )
-
+                    
                 else
                     uitoggled = false
                     ui.Enabled = true
-
+                
                     Main:TweenSize(
                         UDim2.new(0, 560, 0, 319),
                         Enum.EasingDirection.Out,
@@ -191,11 +177,11 @@ function GitanX:Window(text, preset, closebind)
     TabFolder.Name = "TabFolder"
     TabFolder.Parent = Main
 
-    function GitanX:ChangePresetColor(toch)
+    function lib:ChangePresetColor(toch)
         PresetColor = toch
     end
 
-    function GitanX:Notification(texttitle, textdesc, textbtn)
+    function lib:Notification(texttitle, textdesc, textbtn)
         local NotificationHold = Instance.new("TextButton")
         local NotificationFrame = Instance.new("Frame")
         local OkayBtn = Instance.new("TextButton")
@@ -250,7 +236,7 @@ function GitanX:Window(text, preset, closebind)
         OkayBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
         OkayBtn.TextSize = 14.000
 
-        OkayBtnCorner.CornerRadius = UDim.new(0, 8)
+        OkayBtnCorner.CornerRadius = UDim.new(0, 5)
         OkayBtnCorner.Name = "OkayBtnCorner"
         OkayBtnCorner.Parent = OkayBtn
 
@@ -336,7 +322,6 @@ function GitanX:Window(text, preset, closebind)
             end
         )
     end
-
     local tabhold = {}
     function tabhold:Tab(text)
         local TabBtn = Instance.new("TextButton")
@@ -464,7 +449,7 @@ function GitanX:Window(text, preset, closebind)
             Button.TextColor3 = Color3.fromRGB(0, 0, 0)
             Button.TextSize = 14.000
 
-            ButtonCorner.CornerRadius = UDim.new(0, 8)
+            ButtonCorner.CornerRadius = UDim.new(0, 5)
             ButtonCorner.Name = "ButtonCorner"
             ButtonCorner.Parent = Button
 
@@ -534,7 +519,7 @@ function GitanX:Window(text, preset, closebind)
             Toggle.TextColor3 = Color3.fromRGB(0, 0, 0)
             Toggle.TextSize = 14.000
 
-            ToggleCorner.CornerRadius = UDim.new(0, 8)
+            ToggleCorner.CornerRadius = UDim.new(0, 5)
             ToggleCorner.Name = "ToggleCorner"
             ToggleCorner.Parent = Toggle
 
@@ -727,7 +712,7 @@ function GitanX:Window(text, preset, closebind)
             Slider.TextColor3 = Color3.fromRGB(0, 0, 0)
             Slider.TextSize = 14.000
 
-            SliderCorner.CornerRadius = UDim.new(0, 8)
+            SliderCorner.CornerRadius = UDim.new(0, 5)
             SliderCorner.Name = "SliderCorner"
             SliderCorner.Parent = Slider
 
@@ -850,7 +835,7 @@ function GitanX:Window(text, preset, closebind)
             Dropdown.Position = UDim2.new(-0.541071415, 0, -0.532915354, 0)
             Dropdown.Size = UDim2.new(0, 363, 0, 42)
 
-            DropdownCorner.CornerRadius = UDim.new(0, 8)
+            DropdownCorner.CornerRadius = UDim.new(0, 5)
             DropdownCorner.Name = "DropdownCorner"
             DropdownCorner.Parent = Dropdown
 
@@ -956,7 +941,7 @@ function GitanX:Window(text, preset, closebind)
                 Item.TextColor3 = Color3.fromRGB(255, 255, 255)
                 Item.TextSize = 15.000
 
-                ItemCorner.CornerRadius = UDim.new(0, 6)
+                ItemCorner.CornerRadius = UDim.new(0, 4)
                 ItemCorner.Name = "ItemCorner"
                 ItemCorner.Parent = Item
 
@@ -1053,7 +1038,7 @@ function GitanX:Window(text, preset, closebind)
             Colorpicker.Position = UDim2.new(-0.541071415, 0, -0.532915354, 0)
             Colorpicker.Size = UDim2.new(0, 363, 0, 42)
 
-            ColorpickerCorner.CornerRadius = UDim.new(0, 8)
+            ColorpickerCorner.CornerRadius = UDim.new(0, 5)
             ColorpickerCorner.Name = "ColorpickerCorner"
             ColorpickerCorner.Parent = Colorpicker
 
@@ -1075,7 +1060,7 @@ function GitanX:Window(text, preset, closebind)
             BoxColor.Position = UDim2.new(1.60427809, 0, 0.214285716, 0)
             BoxColor.Size = UDim2.new(0, 41, 0, 23)
 
-            BoxColorCorner.CornerRadius = UDim.new(0, 8)
+            BoxColorCorner.CornerRadius = UDim.new(0, 5)
             BoxColorCorner.Name = "BoxColorCorner"
             BoxColorCorner.Parent = BoxColor
 
@@ -1090,7 +1075,7 @@ function GitanX:Window(text, preset, closebind)
             ConfirmBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
             ConfirmBtn.TextSize = 14.000
 
-            ConfirmBtnCorner.CornerRadius = UDim.new(0, 8)
+            ConfirmBtnCorner.CornerRadius = UDim.new(0, 5)
             ConfirmBtnCorner.Name = "ConfirmBtnCorner"
             ConfirmBtnCorner.Parent = ConfirmBtn
 
@@ -1126,7 +1111,7 @@ function GitanX:Window(text, preset, closebind)
             RainbowToggle.TextColor3 = Color3.fromRGB(0, 0, 0)
             RainbowToggle.TextSize = 14.000
 
-            RainbowToggleCorner.CornerRadius = UDim.new(0, 8)
+            RainbowToggleCorner.CornerRadius = UDim.new(0, 5)
             RainbowToggleCorner.Name = "RainbowToggleCorner"
             RainbowToggleCorner.Parent = RainbowToggle
 
@@ -1185,7 +1170,7 @@ function GitanX:Window(text, preset, closebind)
             Color.ZIndex = 10
             Color.Image = "rbxassetid://4155801252"
 
-            ColorCorner.CornerRadius = UDim.new(0, 6)
+            ColorCorner.CornerRadius = UDim.new(0, 3)
             ColorCorner.Name = "ColorCorner"
             ColorCorner.Parent = Color
 
@@ -1206,7 +1191,7 @@ function GitanX:Window(text, preset, closebind)
             Hue.Position = UDim2.new(0, 202, 0, 42)
             Hue.Size = UDim2.new(0, 25, 0, 80)
 
-            HueCorner.CornerRadius = UDim.new(0, 6)
+            HueCorner.CornerRadius = UDim.new(0, 3)
             HueCorner.Name = "HueCorner"
             HueCorner.Parent = Hue
 
@@ -1423,11 +1408,11 @@ function GitanX:Window(text, preset, closebind)
                         OldHueSelectionPosition = HueSelection.Position
 
                         while RainbowColorPicker do
-                            BoxColor.BackgroundColor3 = Color3.fromHSV(GitanX.RainbowColorValue, 1, 1)
-                            Color.BackgroundColor3 = Color3.fromHSV(GitanX.RainbowColorValue, 1, 1)
+                            BoxColor.BackgroundColor3 = Color3.fromHSV(lib.RainbowColorValue, 1, 1)
+                            Color.BackgroundColor3 = Color3.fromHSV(lib.RainbowColorValue, 1, 1)
 
                             ColorSelection.Position = UDim2.new(1, 0, 0, 0)
-                            HueSelection.Position = UDim2.new(0.48, 0, 0, GitanX.HueSelectionPosition)
+                            HueSelection.Position = UDim2.new(0.48, 0, 0, lib.HueSelectionPosition)
 
                             pcall(callback, BoxColor.BackgroundColor3)
                             wait()
@@ -1504,7 +1489,7 @@ function GitanX:Window(text, preset, closebind)
             Label.TextColor3 = Color3.fromRGB(0, 0, 0)
             Label.TextSize = 14.000
 
-            LabelCorner.CornerRadius = UDim.new(0, 8)
+            LabelCorner.CornerRadius = UDim.new(0, 5)
             LabelCorner.Name = "ButtonCorner"
             LabelCorner.Parent = Label
 
@@ -1537,7 +1522,7 @@ function GitanX:Window(text, preset, closebind)
             Textbox.Position = UDim2.new(-0.541071415, 0, -0.532915354, 0)
             Textbox.Size = UDim2.new(0, 363, 0, 42)
 
-            TextboxCorner.CornerRadius = UDim.new(0, 8)
+            TextboxCorner.CornerRadius = UDim.new(0, 5)
             TextboxCorner.Name = "TextboxCorner"
             TextboxCorner.Parent = Textbox
 
@@ -1559,7 +1544,7 @@ function GitanX:Window(text, preset, closebind)
             TextboxFrame.Position = UDim2.new(1.28877008, 0, 0.214285716, 0)
             TextboxFrame.Size = UDim2.new(0, 100, 0, 23)
 
-            TextboxFrameCorner.CornerRadius = UDim.new(0, 8)
+            TextboxFrameCorner.CornerRadius = UDim.new(0, 5)
             TextboxFrameCorner.Name = "TextboxFrameCorner"
             TextboxFrameCorner.Parent = TextboxFrame
 
@@ -1604,7 +1589,7 @@ function GitanX:Window(text, preset, closebind)
             Bind.TextColor3 = Color3.fromRGB(0, 0, 0)
             Bind.TextSize = 14.000
 
-            BindCorner.CornerRadius = UDim.new(0, 8)
+            BindCorner.CornerRadius = UDim.new(0, 5)
             BindCorner.Name = "BindCorner"
             BindCorner.Parent = Bind
 
@@ -1638,8 +1623,8 @@ function GitanX:Window(text, preset, closebind)
                 function()
                     BindText.Text = "..."
                     binding = true
-                    local inputwait = UserInputService.InputBegan:Wait()
-                    if inputwait.KeyCode and inputwait.KeyCode.Name ~= "Unknown" then
+                    local inputwait = game:GetService("UserInputService").InputBegan:wait()
+                    if inputwait.KeyCode.Name ~= "Unknown" then
                         BindText.Text = inputwait.KeyCode.Name
                         Key = inputwait.KeyCode.Name
                         binding = false
@@ -1649,11 +1634,10 @@ function GitanX:Window(text, preset, closebind)
                 end
             )
 
-            -- fixed :connect -> :Connect and kept existing behavior
-            UserInputService.InputBegan:Connect(
+            game:GetService("UserInputService").InputBegan:connect(
                 function(current, pressed)
                     if not pressed then
-                        if current.KeyCode and current.KeyCode.Name == Key and binding == false then
+                        if current.KeyCode.Name == Key and binding == false then
                             pcall(callback)
                         end
                     end
@@ -1664,5 +1648,4 @@ function GitanX:Window(text, preset, closebind)
     end
     return tabhold
 end
-
-return GitanX
+return lib
