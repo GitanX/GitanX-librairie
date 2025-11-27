@@ -110,20 +110,38 @@ function lib:Window(text, preset, closebind)
     Main.Name = "Main"
     Main.Parent = ui
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
-    Main.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    -- outer frame slightly lighter to create the border effect like on your screenshot
+    Main.BackgroundColor3 = Color3.fromRGB(42, 42, 42)
     Main.BorderSizePixel = 0
     Main.Position = UDim2.new(0.5, 0, 0.5, 0)
     Main.Size = UDim2.new(0, 0, 0, 0)
     Main.ClipsDescendants = true
     Main.Visible = true
 
-    -- Main corner (plus arrondi)
+    -- Main corner (outer rounded)
     MainCorner.CornerRadius = UDim.new(0, 12)
     MainCorner.Name = "MainCorner"
     MainCorner.Parent = Main
 
+    -- INNER container (new): this is the darker inner panel (padding inside Main)
+    local MainInner = Instance.new("Frame")
+    local MainInnerCorner = Instance.new("UICorner")
+    MainInner.Name = "MainInner"
+    MainInner.Parent = Main
+    MainInner.AnchorPoint = Vector2.new(0.5, 0.5)
+    -- place it centered inside Main with a padding of 8 pixels
+    MainInner.Position = UDim2.new(0.5, 0, 0.5, 0)
+    MainInner.Size = UDim2.new(0, 544, 0, 303) -- will be tweened by Main's tween, but keep initial
+    MainInner.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MainInner.BorderSizePixel = 0
+    MainInner.ClipsDescendants = true
+
+    MainInnerCorner.CornerRadius = UDim.new(0, 10)
+    MainInnerCorner.Name = "MainInnerCorner"
+    MainInnerCorner.Parent = MainInner
+
     TabHold.Name = "TabHold"
-    TabHold.Parent = Main
+    TabHold.Parent = MainInner
     TabHold.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     TabHold.BackgroundTransparency = 1.000
     TabHold.Position = UDim2.new(0.0339285731, 0, 0.147335425, 0)
@@ -135,7 +153,7 @@ function lib:Window(text, preset, closebind)
     TabHoldLayout.Padding = UDim.new(0, 11)
 
     Title.Name = "Title"
-    Title.Parent = Main
+    Title.Parent = MainInner
     Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     Title.BackgroundTransparency = 1.000
     Title.Position = UDim2.new(0.0339285731, 0, 0.0564263314, 0)
@@ -147,12 +165,17 @@ function lib:Window(text, preset, closebind)
     Title.TextXAlignment = Enum.TextXAlignment.Left
 
     DragFrame.Name = "DragFrame"
-    DragFrame.Parent = Main
+    DragFrame.Parent = MainInner
     DragFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     DragFrame.BackgroundTransparency = 1.000
-    DragFrame.Size = UDim2.new(0, 560, 0, 41)
+    DragFrame.Size = UDim2.new(0, 560, 0, 41) -- kept same width so drag area matches original
 
-    Main:TweenSize(UDim2.new(0, 560, 0, 319), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
+    -- Tween the OUTER Main to show/open; inner sits inside and gives the border/padding look
+    Main:TweenSize(UDim2.new(0, 560, 0, 319), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true, function()
+        -- adjust MainInner size/position dynamically after tween finishes to remain centered with padding
+        MainInner.Position = UDim2.new(0.5, 0, 0.5, 0)
+        MainInner.Size = UDim2.new(0, 544, 0, 303)
+    end)
 
     MakeDraggable(DragFrame, Main)
 
@@ -188,7 +211,7 @@ function lib:Window(text, preset, closebind)
     end)
 
     TabFolder.Name = "TabFolder"
-    TabFolder.Parent = Main
+    TabFolder.Parent = MainInner
 
     function lib:ChangePresetColor(toch)
         PresetColor = toch
@@ -204,6 +227,7 @@ function lib:Window(text, preset, closebind)
         local NotificationDesc = Instance.new("TextLabel")
 
         NotificationHold.Name = "NotificationHold"
+        -- keep notifications parented to the OUTER Main so they cover the whole window area as before
         NotificationHold.Parent = Main
         NotificationHold.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         NotificationHold.BackgroundTransparency = 1.000
