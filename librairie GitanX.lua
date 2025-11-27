@@ -695,6 +695,8 @@ function lib:Window(text, preset, closebind)
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
         function tabcontent:Slider(text, min, max, start, callback)
+            -- Remplacement du bloc Slider : même logique, taille et look plus gros (sans changer la logique)
+
             local dragging = false
             local Slider = Instance.new("TextButton")
             local SliderCorner = Instance.new("UICorner")
@@ -708,14 +710,15 @@ function lib:Window(text, preset, closebind)
             Slider.Parent = Tab
             Slider.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
             Slider.Position = UDim2.new(-0.48035714, 0, -0.570532918, 0)
-            Slider.Size = UDim2.new(0, 363, 0, 60)
+            -- Hauteur augmentée pour un "gros" slider
+            Slider.Size = UDim2.new(0, 363, 0, 92)
             Slider.AutoButtonColor = false
             Slider.Font = Enum.Font.SourceSans
             Slider.Text = ""
             Slider.TextColor3 = Color3.fromRGB(0, 0, 0)
             Slider.TextSize = 14.000
 
-            SliderCorner.CornerRadius = UDim.new(0, 8)
+            SliderCorner.CornerRadius = UDim.new(0, 10)
             SliderCorner.Name = "SliderCorner"
             SliderCorner.Parent = Slider
 
@@ -747,21 +750,23 @@ function lib:Window(text, preset, closebind)
             SlideFrame.Parent = Slider
             SlideFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             SlideFrame.BorderSizePixel = 0
-            SlideFrame.Position = UDim2.new(0.0342647657, 0, 0.686091602, 0)
-            SlideFrame.Size = UDim2.new(0, 335, 0, 3)
+            -- SlideFrame plus grand (épais) pour un gros slider
+            SlideFrame.Position = UDim2.new(0.0342647657, 0, 0.55, 0)
+            SlideFrame.Size = UDim2.new(0, 335, 0, 18)
 
             CurrentValueFrame.Name = "CurrentValueFrame"
             CurrentValueFrame.Parent = SlideFrame
             CurrentValueFrame.BackgroundColor3 = PresetColor
             CurrentValueFrame.BorderSizePixel = 0
-            CurrentValueFrame.Size = UDim2.new((start or 0) / max, 0, 0, 3)
+            CurrentValueFrame.Size = UDim2.new((start or 0) / max, 0, 0, 18)
 
             SlideCircle.Name = "SlideCircle"
             SlideCircle.Parent = SlideFrame
             SlideCircle.BackgroundColor3 = PresetColor
             SlideCircle.BackgroundTransparency = 1.000
-            SlideCircle.Position = UDim2.new((start or 0) / max, -6, -1.30499995, 0)
-            SlideCircle.Size = UDim2.new(0, 11, 0, 11)
+            -- curseur grand et rond
+            SlideCircle.Position = UDim2.new((start or 0) / max, -12, 0.5, -12)
+            SlideCircle.Size = UDim2.new(0, 24, 0, 24)
             SlideCircle.Image = "rbxassetid://3570695787"
             SlideCircle.ImageColor3 = PresetColor
 
@@ -774,8 +779,9 @@ function lib:Window(text, preset, closebind)
 
             local function move(input)
                 local scale = math.clamp((input.Position.X - SlideFrame.AbsolutePosition.X) / SlideFrame.AbsoluteSize.X, 0, 1)
-                local pos = UDim2.new(scale, -6, -1.30499995, 0)
-                local pos1 = UDim2.new(scale, 0, 0, 3)
+                -- nouvelles positions basées sur le grand curseur
+                local pos = UDim2.new(scale, -12, 0.5, -12)
+                local pos1 = UDim2.new(scale, 0, 0, 18)
                 CurrentValueFrame:TweenSize(pos1, "Out", "Sine", 0.1, true)
                 SlideCircle:TweenPosition(pos, "Out", "Sine", 0.1, true)
                 local value = math.floor((scale * (max - min)) + min)
