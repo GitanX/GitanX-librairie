@@ -225,7 +225,13 @@ function lib:Window(text, preset, closebind)
     end
 
     function lib:Notification(texttitle, textdesc, textbtn)
-        local NotificationHold = Instance.new("TextButton")
+        -- Notifications are now shown at the bottom-right outside the main menu (bottom-right of the outer Main frame)
+        -- Only changed the notification placement and container; logic otherwise kept same.
+
+        local notifW, notifH = 164, 193
+        local margin = 8
+
+        local NotificationHold = Instance.new("Frame")
         local NotificationFrame = Instance.new("Frame")
         local OkayBtn = Instance.new("TextButton")
         local OkayBtnCorner = Instance.new("UICorner")
@@ -234,40 +240,48 @@ function lib:Window(text, preset, closebind)
         local NotificationDesc = Instance.new("TextLabel")
 
         NotificationHold.Name = "NotificationHold"
-        -- keep notifications parented to the OUTER Main so they cover the whole window area as before
-        NotificationHold.Parent = Main
-        NotificationHold.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        NotificationHold.BackgroundTransparency = 1.000
+        -- parent to ui so it does not overlay the main centered menu; we'll position it near the Main's bottom-right
+        NotificationHold.Parent = ui
+        NotificationHold.BackgroundTransparency = 1
         NotificationHold.BorderSizePixel = 0
-        NotificationHold.Size = UDim2.new(0, 560, 0, 319)
-        NotificationHold.AutoButtonColor = false
-        NotificationHold.Font = Enum.Font.SourceSans
-        NotificationHold.Text = ""
-        NotificationHold.TextColor3 = Color3.fromRGB(0, 0, 0)
-        NotificationHold.TextSize = 14.000
+        NotificationHold.Size = UDim2.new(0, notifW, 0, notifH)
 
-        TweenService:Create(
-            NotificationHold,
-            TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundTransparency = 0.7}
-        ):Play()
-        wait(0.4)
+        -- compute position based on Main's AbsolutePosition + AbsoluteSize to place at bottom-right of the outer Main
+        -- wait if Main hasn't calculated AbsoluteSize yet
+        if Main.AbsoluteSize.X == 0 then
+            Main:GetPropertyChangedSignal("AbsoluteSize"):Wait()
+        end
+
+        local function updateNotificationPosition()
+            local outerPos = Main.AbsolutePosition
+            local outerSize = Main.AbsoluteSize
+            local x = outerPos.X + outerSize.X - notifW - margin
+            local y = outerPos.Y + outerSize.Y - notifH - margin
+            NotificationHold.Position = UDim2.new(0, x, 0, y)
+        end
+
+        updateNotificationPosition()
+        -- also keep it updated if Main moves/resizes while notification visible
+        local absConn
+        absConn = Main:GetPropertyChangedSignal("AbsolutePosition"):Connect(updateNotificationPosition)
+        local absSizeConn
+        absSizeConn = Main:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateNotificationPosition)
 
         NotificationFrame.Name = "NotificationFrame"
         NotificationFrame.Parent = NotificationHold
-        NotificationFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+        NotificationFrame.AnchorPoint = Vector2.new(0, 0)
         NotificationFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
         NotificationFrame.BorderSizePixel = 0
         NotificationFrame.ClipsDescendants = true
-        NotificationFrame.Position = UDim2.new(0.5, 0, 0.498432577, 0)
+        NotificationFrame.Position = UDim2.new(0, 0, 0, 0)
+        NotificationFrame.Size = UDim2.new(0, 0, 0, 0)
 
-        -- notification corner
         local NotificationFrameCorner = Instance.new("UICorner")
         NotificationFrameCorner.CornerRadius = UDim.new(0, 10)
         NotificationFrameCorner.Parent = NotificationFrame
 
         NotificationFrame:TweenSize(
-            UDim2.new(0, 164, 0, 193),
+            UDim2.new(0, notifW, 0, notifH),
             Enum.EasingDirection.Out,
             Enum.EasingStyle.Quart,
             .6,
@@ -343,7 +357,9 @@ function lib:Window(text, preset, closebind)
             ):Play()
         end)
 
-        OkayBtn.MouseButton1Click:Connect(function()
+        local function destroyNotification()
+            if absConn then absConn:Disconnect() end
+            if absSizeConn then absSizeConn:Disconnect() end
             NotificationFrame:TweenSize(
                 UDim2.new(0, 0, 0, 0),
                 Enum.EasingDirection.Out,
@@ -351,19 +367,11 @@ function lib:Window(text, preset, closebind)
                 .6,
                 true
             )
-
             wait(0.4)
-
-            TweenService:Create(
-                NotificationHold,
-                TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundTransparency = 1}
-            ):Play()
-
-            wait(.3)
-
             NotificationHold:Destroy()
-        end)
+        end
+
+        OkayBtn.MouseButton1Click:Connect(destroyNotification)
     end
 
     local tabhold = {}
