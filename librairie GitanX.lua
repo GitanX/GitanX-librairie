@@ -110,8 +110,8 @@ function lib:Window(text, preset, closebind)
     Main.Name = "Main"
     Main.Parent = ui
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
-    -- outer frame slightly lighter to create the border effect like on your screenshot
-    Main.BackgroundColor3 = Color3.fromRGB(42, 42, 42)
+    -- outer frame: now follows PresetColor so it can change / rainbow like other elements
+    Main.BackgroundColor3 = PresetColor
     Main.BorderSizePixel = 0
     Main.Position = UDim2.new(0.5, 0, 0.5, 0)
     Main.Size = UDim2.new(0, 0, 0, 0)
@@ -139,6 +139,13 @@ function lib:Window(text, preset, closebind)
     MainInnerCorner.CornerRadius = UDim.new(0, 10)
     MainInnerCorner.Name = "MainInnerCorner"
     MainInnerCorner.Parent = MainInner
+
+    -- keep outer border in sync with PresetColor (so changing color / rainbow affects it)
+    coroutine.wrap(function()
+        while wait() do
+            Main.BackgroundColor3 = PresetColor
+        end
+    end)()
 
     TabHold.Name = "TabHold"
     TabHold.Parent = MainInner
