@@ -129,9 +129,9 @@ function lib:Window(text, preset, closebind)
     MainInner.Name = "MainInner"
     MainInner.Parent = Main
     MainInner.AnchorPoint = Vector2.new(0.5, 0.5)
-    -- place it centered inside Main with a padding of 8 pixels
+    -- place it centered inside Main with a padding of 4 pixels
     MainInner.Position = UDim2.new(0.5, 0, 0.5, 0)
-    MainInner.Size = UDim2.new(0, 544, 0, 303) -- will be tweened by Main's tween, but keep initial
+    MainInner.Size = UDim2.new(0, 552, 0, 311) -- adjusted for 4px border (560-2*4 = 552, 319-2*4 = 311)
     MainInner.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     MainInner.BorderSizePixel = 0
     MainInner.ClipsDescendants = true
@@ -181,7 +181,7 @@ function lib:Window(text, preset, closebind)
     Main:TweenSize(UDim2.new(0, 560, 0, 319), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true, function()
         -- adjust MainInner size/position dynamically after tween finishes to remain centered with padding
         MainInner.Position = UDim2.new(0.5, 0, 0.5, 0)
-        MainInner.Size = UDim2.new(0, 544, 0, 303)
+        MainInner.Size = UDim2.new(0, 552, 0, 311) -- adjusted for 4px border
     end)
 
     MakeDraggable(DragFrame, Main)
