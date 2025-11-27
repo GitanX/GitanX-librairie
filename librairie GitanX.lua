@@ -1,4 +1,3 @@
--- Vape -> adapté GitanX (UI plus arrondie, corrections mineures sans changer la logique)
 local lib = {RainbowColorValue = 0, HueSelectionPosition = 0}
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
