@@ -694,7 +694,7 @@ function lib:Window(text, preset, closebind)
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
         function tabcontent:Slider(text, min, max, start, callback)
-            -- Remplacement du bloc Slider : même logique, taille et look plus gros (sans changer la logique)
+            -- Slider (gros) avec barre grise arrondie — remplace la section Slider existante
 
             local dragging = false
             local Slider = Instance.new("TextButton")
@@ -753,17 +753,29 @@ function lib:Window(text, preset, closebind)
             SlideFrame.Position = UDim2.new(0.0342647657, 0, 0.55, 0)
             SlideFrame.Size = UDim2.new(0, 335, 0, 18)
 
+            -- Rounded corners for the background bar (pill shape)
+            local SlideFrameCorner = Instance.new("UICorner")
+            SlideFrameCorner.CornerRadius = UDim.new(0, 9) -- half the height -> pill
+            SlideFrameCorner.Name = "SlideFrameCorner"
+            SlideFrameCorner.Parent = SlideFrame
+
             CurrentValueFrame.Name = "CurrentValueFrame"
             CurrentValueFrame.Parent = SlideFrame
             CurrentValueFrame.BackgroundColor3 = PresetColor
             CurrentValueFrame.BorderSizePixel = 0
             CurrentValueFrame.Size = UDim2.new((start or 0) / max, 0, 0, 18)
 
+            -- Rounded corners for the filled part so it matches the pill background
+            local CurrentValueCorner = Instance.new("UICorner")
+            CurrentValueCorner.CornerRadius = UDim.new(0, 9)
+            CurrentValueCorner.Name = "CurrentValueCorner"
+            CurrentValueCorner.Parent = CurrentValueFrame
+
             SlideCircle.Name = "SlideCircle"
             SlideCircle.Parent = SlideFrame
             SlideCircle.BackgroundColor3 = PresetColor
             SlideCircle.BackgroundTransparency = 1.000
-            -- curseur grand et rond
+            -- curseur grand et rond (on conserve l'image ; si tu veux un Frame + UICorner, tu peux remplacer)
             SlideCircle.Position = UDim2.new((start or 0) / max, -12, 0.5, -12)
             SlideCircle.Size = UDim2.new(0, 24, 0, 24)
             SlideCircle.Image = "rbxassetid://3570695787"
@@ -808,7 +820,6 @@ function lib:Window(text, preset, closebind)
 
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
-
         function tabcontent:Dropdown(text, list, callback)
             local droptog = false
             local framesize = 0
