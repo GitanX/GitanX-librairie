@@ -225,9 +225,7 @@ function lib:Window(text, preset, closebind)
     end
 
     function lib:Notification(texttitle, textdesc, textbtn)
-        -- Notifications are now shown at the bottom-right outside the main menu (bottom-right of the outer Main frame)
-        -- Only changed the notification placement and container; logic otherwise kept same.
-
+        -- Notifications now appear at bottom-right of the player's screen (anchored to the UI), not on the main menu.
         local notifW, notifH = 164, 193
         local margin = 8
 
@@ -240,32 +238,13 @@ function lib:Window(text, preset, closebind)
         local NotificationDesc = Instance.new("TextLabel")
 
         NotificationHold.Name = "NotificationHold"
-        -- parent to ui so it does not overlay the main centered menu; we'll position it near the Main's bottom-right
-        NotificationHold.Parent = ui
+        NotificationHold.Parent = ui -- parent to top-level UI so it's relative to the whole screen
         NotificationHold.BackgroundTransparency = 1
         NotificationHold.BorderSizePixel = 0
         NotificationHold.Size = UDim2.new(0, notifW, 0, notifH)
-
-        -- compute position based on Main's AbsolutePosition + AbsoluteSize to place at bottom-right of the outer Main
-        -- wait if Main hasn't calculated AbsoluteSize yet
-        if Main.AbsoluteSize.X == 0 then
-            Main:GetPropertyChangedSignal("AbsoluteSize"):Wait()
-        end
-
-        local function updateNotificationPosition()
-            local outerPos = Main.AbsolutePosition
-            local outerSize = Main.AbsoluteSize
-            local x = outerPos.X + outerSize.X - notifW - margin
-            local y = outerPos.Y + outerSize.Y - notifH - margin
-            NotificationHold.Position = UDim2.new(0, x, 0, y)
-        end
-
-        updateNotificationPosition()
-        -- also keep it updated if Main moves/resizes while notification visible
-        local absConn
-        absConn = Main:GetPropertyChangedSignal("AbsolutePosition"):Connect(updateNotificationPosition)
-        local absSizeConn
-        absSizeConn = Main:GetPropertyChangedSignal("AbsoluteSize"):Connect(updateNotificationPosition)
+        -- anchor bottom-right and offset inside screen by margin
+        NotificationHold.AnchorPoint = Vector2.new(1, 1)
+        NotificationHold.Position = UDim2.new(1, -margin, 1, -margin)
 
         NotificationFrame.Name = "NotificationFrame"
         NotificationFrame.Parent = NotificationHold
@@ -358,8 +337,6 @@ function lib:Window(text, preset, closebind)
         end)
 
         local function destroyNotification()
-            if absConn then absConn:Disconnect() end
-            if absSizeConn then absSizeConn:Disconnect() end
             NotificationFrame:TweenSize(
                 UDim2.new(0, 0, 0, 0),
                 Enum.EasingDirection.Out,
@@ -1297,11 +1274,11 @@ function lib:Window(text, preset, closebind)
                     OldColorSelectionPosition = ColorSelection.Position
                     OldHueSelectionPosition = HueSelection.Position
 
+                    -- simple rainbow: only change the displayed colors (no moving of the color/hue cursors)
                     while RainbowColorPicker do
-                        BoxColor.BackgroundColor3 = Color3.fromHSV(lib.RainbowColorValue, 1, 1)
-                        Color.BackgroundColor3 = Color3.fromHSV(lib.RainbowColorValue, 1, 1)
-                        ColorSelection.Position = UDim2.new(1, 0, 0, 0)
-                        HueSelection.Position = UDim2.new(0.48, 0, 0, lib.HueSelectionPosition)
+                        local c = Color3.fromHSV(lib.RainbowColorValue, 1, 1)
+                        BoxColor.BackgroundColor3 = c
+                        Color.BackgroundColor3 = c
                         pcall(callback, BoxColor.BackgroundColor3)
                         wait()
                     end
