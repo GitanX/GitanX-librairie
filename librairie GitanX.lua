@@ -1,4 +1,4 @@
---This is GitanX its a cool bibrary inspired by other library
+--This is GitanX its a cool bibrary inspired by other library like Vape super good library, rayfield same, orion, fluent.
 
 
 
