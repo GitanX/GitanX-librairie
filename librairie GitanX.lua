@@ -176,14 +176,15 @@ Title.TextColor3 = Color3.fromRGB(68, 68, 68)
 Title.TextSize = 18 -- taille que tu voulais garder
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
-local Shadow = Instance.new("TextLabel")
-Shadow.Parent = Title
-Shadow.Text = Title.Text
-Shadow.Font = Title.Font
-Shadow.TextSize = Title.TextSize
-Shadow.TextColor3 = Color3.fromRGB(0,0,0) -- noir
-Shadow.Position = UDim2.new(0,2,0,2) -- décalage
-Shadow.BackgroundTransparency = 1
+
+-- Dégradé appliqué au texte
+local gradient = Instance.new("UIGradient")
+gradient.Parent = Title
+gradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,255,255)), -- blanc en haut
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180,180,180))  -- gris en bas
+})
+
 
 
 
