@@ -369,19 +369,6 @@ function lib:Window(text, preset, closebind)
         TabBtnWrapperCorner.CornerRadius = UDim.new(0, 8)
         TabBtnWrapperCorner.Parent = TabBtnWrapper
 
-        -- Small visual "grip" on the left side of the wrapper (purely visual,
-        -- does not change logic or add new interactivity)
-        local GripVisual = Instance.new("Frame")
-        local GripCorner = Instance.new("UICorner")
-        GripVisual.Name = "GripVisual"
-        GripVisual.Parent = TabBtnWrapper
-        GripVisual.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-        GripVisual.Position = UDim2.new(0.03, 0, 0.15, 0)
-        GripVisual.Size = UDim2.new(0, 8, 0, 18)
-
-        GripCorner.CornerRadius = UDim.new(0, 4)
-        GripCorner.Parent = GripVisual
-
         -- Tab button is now a child of the wrapper (keeps same appearance and logic)
         local TabBtn = Instance.new("TextButton")
         local TabTitle = Instance.new("TextLabel")
@@ -409,7 +396,7 @@ function lib:Window(text, preset, closebind)
         TabTitle.TextSize = 14.000
         TabTitle.TextXAlignment = Enum.TextXAlignment.Left
         -- shift right a bit to avoid overlap with the grip visual
-        TabTitle.Position = UDim2.new(0, 18, 0, 3)
+        TabTitle.Position = UDim2.new(0, 3, 0, 3)
 
         TabBtnIndicator.Name = "TabBtnIndicator"
         TabBtnIndicator.Parent = TabBtn
