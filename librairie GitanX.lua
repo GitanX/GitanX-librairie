@@ -1,6 +1,7 @@
--- Modified UI library: visual-only changes to Tab button appearance
--- I wrapped each side tab button in a darker "encadrement" and added a visual "grip"
--- The logic and behavior are left untouched; this is only a visual change.
+--This is GitanX its a cool bibrary inspired by other library
+
+
+
 
 local lib = {RainbowColorValue = 0, HueSelectionPosition = 0}
 local UserInputService = game:GetService("UserInputService")
