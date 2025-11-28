@@ -163,20 +163,19 @@ function lib:Window(text, preset, closebind)
     TabHoldLayout.SortOrder = Enum.SortOrder.LayoutOrder
     TabHoldLayout.Padding = UDim.new(0, 11)
 
-    Title.Name = "Title"
+Title.Name = "Title"
 Title.Parent = MainInner
 Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Title.BackgroundTransparency = 1.000
--- Décalé plus à droite (0.15 au lieu de 0.03)
-Title.Position = UDim2.new(0.15, 0, 0.056, 0)
--- Taille un peu plus grande
-Title.Size = UDim2.new(0, 300, 0, 30)
+-- Collé en haut à gauche
+Title.Position = UDim2.new(0, 5, 0, 5)   -- 5px de marge pour éviter qu'il touche le bord
+Title.Size = UDim2.new(0, 200, 0, 23)
 Title.Font = Enum.Font.GothamSemibold
 Title.Text = text
 Title.TextColor3 = Color3.fromRGB(68, 68, 68)
--- Police plus grande (18 au lieu de 12)
-Title.TextSize = 18
+Title.TextSize = 18                       -- taille que tu voulais garder
 Title.TextXAlignment = Enum.TextXAlignment.Left
+
 
 
     DragFrame.Name = "DragFrame"
