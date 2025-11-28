@@ -1,3 +1,7 @@
+-- Modified UI library: visual-only changes to Tab button appearance
+-- I wrapped each side tab button in a darker "encadrement" and added a visual "grip"
+-- The logic and behavior are left untouched; this is only a visual change.
+
 local lib = {RainbowColorValue = 0, HueSelectionPosition = 0}
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -353,16 +357,42 @@ function lib:Window(text, preset, closebind)
 
     local tabhold = {}
     function tabhold:Tab(text)
+        -- Visual wrapper ("encadrement") for each Tab button on the left
+        local TabBtnWrapper = Instance.new("Frame")
+        local TabBtnWrapperCorner = Instance.new("UICorner")
+        TabBtnWrapper.Name = "TabBtnWrapper"
+        TabBtnWrapper.Parent = TabHold
+        TabBtnWrapper.BackgroundColor3 = Color3.fromRGB(27, 27, 27) -- darker panel for the black look
+        TabBtnWrapper.Size = UDim2.new(0, 107, 0, 28)
+        TabBtnWrapper.BorderSizePixel = 0
+
+        TabBtnWrapperCorner.CornerRadius = UDim.new(0, 8)
+        TabBtnWrapperCorner.Parent = TabBtnWrapper
+
+        -- Small visual "grip" on the left side of the wrapper (purely visual,
+        -- does not change logic or add new interactivity)
+        local GripVisual = Instance.new("Frame")
+        local GripCorner = Instance.new("UICorner")
+        GripVisual.Name = "GripVisual"
+        GripVisual.Parent = TabBtnWrapper
+        GripVisual.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        GripVisual.Position = UDim2.new(0.03, 0, 0.15, 0)
+        GripVisual.Size = UDim2.new(0, 8, 0, 18)
+
+        GripCorner.CornerRadius = UDim.new(0, 4)
+        GripCorner.Parent = GripVisual
+
+        -- Tab button is now a child of the wrapper (keeps same appearance and logic)
         local TabBtn = Instance.new("TextButton")
         local TabTitle = Instance.new("TextLabel")
         local TabBtnIndicator = Instance.new("Frame")
         local TabBtnIndicatorCorner = Instance.new("UICorner")
 
         TabBtn.Name = "TabBtn"
-        TabBtn.Parent = TabHold
-        TabBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        TabBtn.Parent = TabBtnWrapper
         TabBtn.BackgroundTransparency = 1.000
-        TabBtn.Size = UDim2.new(0, 107, 0, 21)
+        TabBtn.Position = UDim2.new(0, 0, 0, 0)
+        TabBtn.Size = UDim2.new(1, 0, 1, 0)
         TabBtn.Font = Enum.Font.SourceSans
         TabBtn.Text = ""
         TabBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
@@ -378,6 +408,8 @@ function lib:Window(text, preset, closebind)
         TabTitle.TextColor3 = Color3.fromRGB(150, 150, 150)
         TabTitle.TextSize = 14.000
         TabTitle.TextXAlignment = Enum.TextXAlignment.Left
+        -- shift right a bit to avoid overlap with the grip visual
+        TabTitle.Position = UDim2.new(0, 18, 0, 3)
 
         TabBtnIndicator.Name = "TabBtnIndicator"
         TabBtnIndicator.Parent = TabBtn
@@ -431,33 +463,42 @@ function lib:Window(text, preset, closebind)
             end
             Tab.Visible = true
             for i, v in next, TabHold:GetChildren() do
-                if v.Name == "TabBtn" then
-                    v.TabBtnIndicator:TweenSize(
-                        UDim2.new(0, 0, 0, 2),
-                        Enum.EasingDirection.Out,
-                        Enum.EasingStyle.Quart,
-                        .2,
-                        true
-                    )
-                    TabBtnIndicator:TweenSize(
-                        UDim2.new(0, 13, 0, 2),
-                        Enum.EasingDirection.Out,
-                        Enum.EasingStyle.Quart,
-                        .2,
-                        true
-                    )
-                    TweenService:Create(
-                        v.TabTitle,
-                        TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                        {TextColor3 = Color3.fromRGB(150, 150, 150)}
-                    ):Play()
-                    TweenService:Create(
-                        TabTitle,
-                        TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                        {TextColor3 = Color3.fromRGB(255, 255, 255)}
-                    ):Play()
+                if v:FindFirstChild("TabBtn") then
+                    local tBtn = v:FindFirstChild("TabBtn")
+                    if tBtn and tBtn:FindFirstChild("TabBtnIndicator") then
+                        tBtn.TabBtnIndicator:TweenSize(
+                            UDim2.new(0, 0, 0, 2),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                    end
+                    if v:FindFirstChildOfClass("Frame") then
+                        -- revert text color for non-selected
+                        local tTitle = tBtn:FindFirstChildWhichIsA("TextLabel")
+                        if tTitle then
+                            TweenService:Create(
+                                tTitle,
+                                TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                                {TextColor3 = Color3.fromRGB(150, 150, 150)}
+                            ):Play()
+                        end
+                    end
                 end
             end
+            TabBtnIndicator:TweenSize(
+                UDim2.new(0, 13, 0, 2),
+                Enum.EasingDirection.Out,
+                Enum.EasingStyle.Quart,
+                .2,
+                true
+            )
+            TweenService:Create(
+                TabTitle,
+                TweenInfo.new(.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {TextColor3 = Color3.fromRGB(255, 255, 255)}
+            ):Play()
         end)
         local tabcontent = {}
         function tabcontent:Button(text, callback)
