@@ -167,14 +167,15 @@ Title.Name = "Title"
 Title.Parent = MainInner
 Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 Title.BackgroundTransparency = 1.000
--- Collé en haut à gauche
-Title.Position = UDim2.new(0, 5, 0, 5)   -- 5px de marge pour éviter qu'il touche le bord
+-- 👇 Collé en haut à gauche (0,0) avec juste 2px de marge
+Title.Position = UDim2.new(0, 2, 0, 2)
 Title.Size = UDim2.new(0, 200, 0, 23)
 Title.Font = Enum.Font.GothamSemibold
 Title.Text = text
 Title.TextColor3 = Color3.fromRGB(68, 68, 68)
-Title.TextSize = 18                       -- taille que tu voulais garder
+Title.TextSize = 18 -- taille que tu voulais garder
 Title.TextXAlignment = Enum.TextXAlignment.Left
+
 
 
 
