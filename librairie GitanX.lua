@@ -176,11 +176,14 @@ Title.TextColor3 = Color3.fromRGB(68, 68, 68)
 Title.TextSize = 18 -- taille que tu voulais garder
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Glow autour du texte
-local stroke = Instance.new("UIStroke")
-stroke.Parent = Title
-stroke.Color = PresetColor
-stroke.Thickness = 2
+local Shadow = Instance.new("TextLabel")
+Shadow.Parent = Title
+Shadow.Text = Title.Text
+Shadow.Font = Title.Font
+Shadow.TextSize = Title.TextSize
+Shadow.TextColor3 = Color3.fromRGB(0,0,0) -- noir
+Shadow.Position = UDim2.new(0,2,0,2) -- décalage
+Shadow.BackgroundTransparency = 1
 
 
 
